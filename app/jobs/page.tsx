@@ -169,7 +169,7 @@ export default function JobsPage() {
                 <SelectValue placeholder="Settore" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tutti i settori</SelectItem>
+                <SelectItem value="all">Tutti i settori</SelectItem>
                 {sectors.map(sector => (
                   <SelectItem key={sector} value={sector}>{sector}</SelectItem>
                 ))}
@@ -181,7 +181,7 @@ export default function JobsPage() {
                 <SelectValue placeholder="Tipo Contratto" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tutti i contratti</SelectItem>
+                <SelectItem value="all">Tutti i contratti</SelectItem>
                 {contracts.map(contract => (
                   <SelectItem key={contract} value={contract}>
                     {contract === "dipendente" ? "Dipendente" : contract === "piva" ? "P.IVA" : contract}
@@ -195,7 +195,7 @@ export default function JobsPage() {
                 <SelectValue placeholder="Modalità" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tutte le modalità</SelectItem>
+                <SelectItem value="all">Tutte le modalità</SelectItem>
                 {modes.map(mode => (
                   <SelectItem key={mode} value={mode}>{mode}</SelectItem>
                 ))}

@@ -217,7 +217,7 @@ export default function CommunityPage() {
                   <SelectValue placeholder="Regione" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tutte le regioni</SelectItem>
+                  <SelectItem value="all">Tutte le regioni</SelectItem>
                   {regions.map(region => (
                     <SelectItem key={region} value={region}>{region}</SelectItem>
                   ))}
