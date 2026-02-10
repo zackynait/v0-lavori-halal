@@ -3,7 +3,6 @@
 import React from "react"
 
 import { useState } from "react"
-import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -18,8 +17,6 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
-
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -37,16 +34,10 @@ export default function ResetPasswordPage() {
       return
     }
 
-    const { error } = await supabase.auth.updateUser({
-      password,
-    })
-
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-    } else {
+    // Simulate password reset (in a real app, this would update the password in database)
+    setTimeout(() => {
       router.push("/auth/login?message=Password aggiornata con successo")
-    }
+    }, 2000)
   }
 
   return (

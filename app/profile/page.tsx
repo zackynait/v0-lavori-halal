@@ -3,7 +3,6 @@
 import React from "react"
 
 import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -20,36 +19,21 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
-        router.push("/auth/login")
-        return
-      }
-
-      setEmail(user.email || "")
-      setFullName(user.user_metadata?.full_name || "")
-
-      // Fetch profile data
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("full_name")
-        .eq("id", user.id)
-        .single()
-
-      if (profile?.full_name) {
-        setFullName(profile.full_name)
-      }
-
-      setLoading(false)
+    // Simulate fetching user data from localStorage
+    const userEmail = localStorage.getItem('userEmail')
+    const userName = localStorage.getItem('userName')
+    
+    if (!userEmail) {
+      router.push("/auth/login")
+      return
     }
 
-    fetchUser()
-  }, [supabase, router])
+    setEmail(userEmail)
+    setFullName(userName || "")
+    setLoading(false)
+  }, [router])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,37 +41,12 @@ export default function ProfilePage() {
     setError(null)
     setSuccess(false)
 
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) return
-
-    // Update auth metadata
-    const { error: authError } = await supabase.auth.updateUser({
-      data: { full_name: fullName }
-    })
-
-    if (authError) {
-      setError(authError.message)
-      setSaving(false)
-      return
-    }
-
-    // Update profile table
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .upsert({
-        id: user.id,
-        full_name: fullName,
-      })
-
-    if (profileError) {
-      setError(profileError.message)
-    } else {
+    // Simulate saving profile data
+    setTimeout(() => {
+      localStorage.setItem('userName', fullName)
       setSuccess(true)
-      setTimeout(() => setSuccess(false), 3000)
-    }
-
-    setSaving(false)
+      setSaving(false)
+    }, 1500)
   }
 
   if (loading) {
