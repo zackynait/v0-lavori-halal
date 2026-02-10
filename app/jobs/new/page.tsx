@@ -1,9 +1,6 @@
 "use client"
 
-import React from "react"
-
-import { useState } from "react"
-import { createClient } from "@/lib/supabase/client"
+import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -12,41 +9,31 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertCircle, Loader2, Briefcase, ArrowLeft, Plus, X } from "lucide-react"
+import { AlertCircle, Loader2, Briefcase, ArrowLeft, Plus, X, Building, CheckCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 const SECTORS = [
   "IT & Tecnologia",
-  "Finance & Banking",
+  "Finanza Islamica",
   "Marketing & Comunicazione",
-  "Risorse Umane",
+  "Ristorazione Halal",
+  "Educazione Islamica",
   "Vendite & Commerciale",
   "Design & Creatività",
   "Ingegneria",
   "Sanità & Healthcare",
-  "Legal & Compliance",
-  "Consulenza",
+  "Consulenza Halal",
   "Operations & Logistica",
   "Altro"
 ]
 
 const SOURCES = [
-  "LinkedIn",
-  "Indeed",
-  "Glassdoor",
-  "Sito Aziendale",
+  "Comunità Musulmana",
+  "Moschea Locale",
+  "Azienda Certificata Halal",
   "Referral",
-  "Agenzia",
-  "Altro"
-]
-
-const CONTACT_TYPES = [
-  "HR / Recruiter",
-  "Manager",
-  "Ex Collega",
-  "Direttore",
-  "Team Lead",
-  "Fondatore / CEO",
+  "Sito Aziendale",
+  "Social Media",
   "Altro"
 ]
 
@@ -54,34 +41,30 @@ const WORK_MODES = [
   "Remoto",
   "Ibrido",
   "In sede",
-  "Da definire"
+  "Presenziale"
 ]
 
 export default function NewJobPage() {
   const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createClient()
 
   // Form state
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [halalReason, setHalalReason] = useState("")
-  const [isPiva, setIsPiva] = useState<string>("")
-  const [source, setSource] = useState("")
+  const [companyName, setCompanyName] = useState("")
+  const [contractType, setContractType] = useState("")
   const [sector, setSector] = useState("")
-  const [contactType, setContactType] = useState("")
-  const [interviewProcess, setInterviewProcess] = useState("")
+  const [source, setSource] = useState("")
   const [technologies, setTechnologies] = useState<string[]>([])
   const [techInput, setTechInput] = useState("")
   const [availability, setAvailability] = useState("")
-  const [projectDuration, setProjectDuration] = useState("")
   const [workMode, setWorkMode] = useState("")
-  const [workModeCustom, setWorkModeCustom] = useState("")
   const [salaryMin, setSalaryMin] = useState("")
   const [salaryMax, setSalaryMax] = useState("")
-  const [dailyRateMin, setDailyRateMin] = useState("")
-  const [dailyRateMax, setDailyRateMax] = useState("")
+  const [contactEmail, setContactEmail] = useState("")
   const [notes, setNotes] = useState("")
 
   const addTechnology = () => {
@@ -100,141 +83,194 @@ export default function NewJobPage() {
     setLoading(true)
     setError(null)
 
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      setError("Devi essere autenticato per pubblicare un annuncio")
+    // Simulate submission (in a real app, this would save to database)
+    setTimeout(() => {
       setLoading(false)
-      return
-    }
+      setSubmitted(true)
+      
+      // In a real app, you would save the job data here
+      console.log("Job submitted:", {
+        title,
+        description,
+        halalReason,
+        companyName,
+        contractType,
+        sector,
+        source,
+        technologies,
+        availability,
+        workMode,
+        salaryMin,
+        salaryMax,
+        contactEmail,
+        notes
+      })
+    }, 2000)
+  }
 
-    const jobData = {
-      user_id: user.id,
-      title,
-      description,
-      halal_reason: halalReason,
-      is_piva: isPiva === "true",
-      source,
-      sector,
-      contact_type: contactType,
-      interview_process: interviewProcess,
-      technologies,
-      availability_period: availability,
-      project_duration: isPiva === "true" ? projectDuration : null,
-      work_mode: workMode === "Altro" ? workModeCustom : workMode,
-      salary_min: isPiva !== "true" && salaryMin ? parseInt(salaryMin) : null,
-      salary_max: isPiva !== "true" && salaryMax ? parseInt(salaryMax) : null,
-      daily_rate_min: isPiva === "true" && dailyRateMin ? parseInt(dailyRateMin) : null,
-      daily_rate_max: isPiva === "true" && dailyRateMax ? parseInt(dailyRateMax) : null,
-      notes,
-    }
-
-    const { error: insertError } = await supabase.from("jobs").insert(jobData)
-
-    if (insertError) {
-      setError(insertError.message)
-      setLoading(false)
-    } else {
-      router.push("/dashboard")
-    }
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center">
+        <Card className="max-w-md w-full mx-4">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="w-8 h-8 text-emerald-600" />
+            </div>
+            <CardTitle className="text-2xl text-gray-900">Annuncio Pubblicato!</CardTitle>
+            <CardDescription>
+              La tua opportunità lavorativa è stata inviata alla comunità e verrà revisionata.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-emerald-50 p-4 rounded-lg">
+              <p className="text-sm text-emerald-800">
+                <strong>Cosa succede ora:</strong><br />
+                • La tua offerta verrà verificata dalla comunità<br />
+                • Riceverai una conferma via email<br />
+                • L'annuncio sarà visibile nella piattaforma
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button onClick={() => router.push("/jobs")} className="flex-1">
+                Vedi Annunci
+              </Button>
+              <Button variant="outline" onClick={() => {
+                setSubmitted(false)
+                setTitle("")
+                setDescription("")
+                setHalalReason("")
+                setCompanyName("")
+                setContractType("")
+                setSector("")
+                setSource("")
+                setTechnologies([])
+                setAvailability("")
+                setWorkMode("")
+                setSalaryMin("")
+                setSalaryMax("")
+                setContactEmail("")
+                setNotes("")
+              }} className="flex-1">
+                Nuovo Annuncio
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
+      {/* Header */}
+      <header className="bg-white border-b border-emerald-100">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Briefcase className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">Lavori Halal</span>
+          <Link href="/" className="flex items-center gap-2">
+            <Building className="h-8 w-8 text-emerald-600" />
+            <span className="text-2xl font-bold text-gray-900">Lavori Halal</span>
           </Link>
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm">
+          <Button variant="outline" asChild>
+            <Link href="/jobs">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Dashboard
-            </Button>
-          </Link>
+              Torna agli Annunci
+            </Link>
+          </Button>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Pubblica Annuncio</h1>
-          <p className="text-muted-foreground mt-2">Condividi un&apos;opportunità di lavoro con la community</p>
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Pubblica Opportunità Lavorativa
+          </h1>
+          <p className="text-xl text-gray-600">
+            Condividi un'opportunità che rispetta i principi islamici con la nostra comunità
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {error && (
-            <div className="flex items-center gap-2 p-4 text-sm text-destructive bg-destructive/10 rounded-lg">
-              <AlertCircle className="w-4 h-4" />
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="flex items-center gap-2 p-4 text-sm text-red-600 bg-red-50 rounded-lg mb-6">
+            <AlertCircle className="w-4 h-4" />
+            {error}
+          </div>
+        )}
 
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-card-foreground">Informazioni Base</CardTitle>
-              <CardDescription>Dettagli principali dell&apos;opportunità</CardDescription>
+              <CardTitle className="text-gray-900">Informazioni Principali</CardTitle>
+              <CardDescription>
+                Dettagli fondamentali dell'opportunità lavorativa
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-card-foreground">Titolo Posizione *</Label>
+                <Label htmlFor="title">Titolo Posizione *</Label>
                 <Input
                   id="title"
-                  placeholder="es. Senior Frontend Developer"
+                  placeholder="es. Sviluppatore Web Full Stack"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
-                  className="bg-background"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-card-foreground">Descrizione *</Label>
+                <Label htmlFor="companyName">Nome Azienda *</Label>
+                <Input
+                  id="companyName"
+                  placeholder="es. Tech Islam Srl"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Descrizione *</Label>
                 <Textarea
                   id="description"
-                  placeholder="Descrivi l'opportunità, responsabilità e requisiti..."
+                  placeholder="Descrivi la posizione, responsabilità, requisiti e perché è un'opportunità halal..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
                   rows={5}
-                  className="bg-background"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="halalReason" className="text-card-foreground">Perché è Halal? *</Label>
+                <Label htmlFor="halalReason">Perché è Halal? *</Label>
                 <Textarea
                   id="halalReason"
-                  placeholder="Spiega perché questa opportunità rispetta i principi etici halal..."
+                  placeholder="Spiega perché questa opportunità rispetta i principi islamici (orari flessibili per preghiere, ambiente halal, prodotti certificati, etc.)..."
                   value={halalReason}
                   onChange={(e) => setHalalReason(e.target.value)}
                   required
                   rows={3}
-                  className="bg-background"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-card-foreground">Tipo Contratto *</Label>
-                  <Select value={isPiva} onValueChange={setIsPiva} required>
-                    <SelectTrigger className="bg-background">
+                  <Label>Tipo Contratto *</Label>
+                  <Select value={contractType} onValueChange={setContractType} required>
+                    <SelectTrigger>
                       <SelectValue placeholder="Seleziona..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="false">Dipendente</SelectItem>
-                      <SelectItem value="true">Partita IVA / Freelance</SelectItem>
+                      <SelectItem value="dipendente">Dipendente</SelectItem>
+                      <SelectItem value="piva">Partita IVA</SelectItem>
+                      <SelectItem value="stage">Stage/Tirocinio</SelectItem>
+                      <SelectItem value="altro">Altro</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-card-foreground">Settore *</Label>
+                  <Label>Settore *</Label>
                   <Select value={sector} onValueChange={setSector} required>
-                    <SelectTrigger className="bg-background">
+                    <SelectTrigger>
                       <SelectValue placeholder="Seleziona..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -248,63 +284,63 @@ export default function NewJobPage() {
             </CardContent>
           </Card>
 
-          {/* Source & Contact */}
+          {/* Work Details */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-card-foreground">Fonte e Contatto</CardTitle>
-              <CardDescription>Da dove proviene questa opportunità</CardDescription>
+              <CardTitle className="text-gray-900">Dettagli Lavorativi</CardTitle>
+              <CardDescription>
+                Informazioni su modalità, disponibilità e retribuzione
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-card-foreground">Fonte *</Label>
-                  <Select value={source} onValueChange={setSource} required>
-                    <SelectTrigger className="bg-background">
+                  <Label>Modalità Lavoro *</Label>
+                  <Select value={workMode} onValueChange={setWorkMode} required>
+                    <SelectTrigger>
                       <SelectValue placeholder="Seleziona..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {SOURCES.map((s) => (
-                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      {WORK_MODES.map((w) => (
+                        <SelectItem key={w} value={w}>{w}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-card-foreground">Tipo Contatto *</Label>
-                  <Select value={contactType} onValueChange={setContactType} required>
-                    <SelectTrigger className="bg-background">
-                      <SelectValue placeholder="Seleziona..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CONTACT_TYPES.map((c) => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="availability">Disponibilità *</Label>
+                  <Input
+                    id="availability"
+                    placeholder="es. Immediato, Febbraio 2026..."
+                    value={availability}
+                    onChange={(e) => setAvailability(e.target.value)}
+                    required
+                  />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Interview Process */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-card-foreground">Processo di Selezione</CardTitle>
-              <CardDescription>Come funziona il colloquio step by step</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="interviewProcess" className="text-card-foreground">Step del Colloquio *</Label>
-                <Textarea
-                  id="interviewProcess"
-                  placeholder="1. Screening telefonico&#10;2. Colloquio tecnico&#10;3. Colloquio con il team&#10;4. Offerta finale"
-                  value={interviewProcess}
-                  onChange={(e) => setInterviewProcess(e.target.value)}
-                  required
-                  rows={5}
-                  className="bg-background"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="salaryMin">Retribuzione Minima (EUR)</Label>
+                  <Input
+                    id="salaryMin"
+                    type="number"
+                    placeholder="es. 25000"
+                    value={salaryMin}
+                    onChange={(e) => setSalaryMin(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="salaryMax">Retribuzione Massima (EUR)</Label>
+                  <Input
+                    id="salaryMax"
+                    type="number"
+                    placeholder="es. 35000"
+                    value={salaryMax}
+                    onChange={(e) => setSalaryMax(e.target.value)}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -312,19 +348,20 @@ export default function NewJobPage() {
           {/* Technologies */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-card-foreground">Tecnologie e Competenze</CardTitle>
-              <CardDescription>Cosa bisogna sapere per questa posizione</CardDescription>
+              <CardTitle className="text-gray-900">Competenze Richieste</CardTitle>
+              <CardDescription>
+                Tecnologie, lingue o competenze specifiche necessarie
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Aggiungi tecnologia o competenza..."
+                  placeholder="Aggiungi competenza o tecnologia..."
                   value={techInput}
                   onChange={(e) => setTechInput(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTechnology())}
-                  className="bg-background"
                 />
-                <Button type="button" onClick={addTechnology} variant="secondary">
+                <Button type="button" onClick={addTechnology} variant="outline">
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
@@ -343,162 +380,61 @@ export default function NewJobPage() {
             </CardContent>
           </Card>
 
-          {/* Availability & Work Mode */}
+          {/* Contact & Source */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-card-foreground">Disponibilità e Modalità</CardTitle>
-              <CardDescription>Quando e dove lavorare</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="availability" className="text-card-foreground">Periodo Disponibilità *</Label>
-                  <Input
-                    id="availability"
-                    placeholder="es. Da subito, Febbraio 2026..."
-                    value={availability}
-                    onChange={(e) => setAvailability(e.target.value)}
-                    required
-                    className="bg-background"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-card-foreground">Modalità Lavoro *</Label>
-                  <Select value={workMode} onValueChange={setWorkMode} required>
-                    <SelectTrigger className="bg-background">
-                      <SelectValue placeholder="Seleziona..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {WORK_MODES.map((w) => (
-                        <SelectItem key={w} value={w}>{w}</SelectItem>
-                      ))}
-                      <SelectItem value="Altro">Altro (specifica)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {workMode === "Altro" && (
-                <div className="space-y-2">
-                  <Label htmlFor="workModeCustom" className="text-card-foreground">Specifica modalità</Label>
-                  <Input
-                    id="workModeCustom"
-                    placeholder="Descrivi la modalità di lavoro..."
-                    value={workModeCustom}
-                    onChange={(e) => setWorkModeCustom(e.target.value)}
-                    className="bg-background"
-                  />
-                </div>
-              )}
-
-              {isPiva === "true" && (
-                <div className="space-y-2">
-                  <Label htmlFor="projectDuration" className="text-card-foreground">Durata Progetto</Label>
-                  <Input
-                    id="projectDuration"
-                    placeholder="es. 6 mesi, 1 anno, Indeterminato..."
-                    value={projectDuration}
-                    onChange={(e) => setProjectDuration(e.target.value)}
-                    className="bg-background"
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Compensation */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-card-foreground">Compenso</CardTitle>
+              <CardTitle className="text-gray-900">Contatto e Fonte</CardTitle>
               <CardDescription>
-                {isPiva === "true" ? "Rate giornaliera per P.IVA" : isPiva === "false" ? "RAL per dipendente" : "Seleziona prima il tipo di contratto"}
+                Come i candidati possono contattare e da dove viene questa opportunità
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {isPiva === "false" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="salaryMin" className="text-card-foreground">RAL Minima (EUR)</Label>
-                    <Input
-                      id="salaryMin"
-                      type="number"
-                      placeholder="es. 35000"
-                      value={salaryMin}
-                      onChange={(e) => setSalaryMin(e.target.value)}
-                      className="bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="salaryMax" className="text-card-foreground">RAL Massima (EUR)</Label>
-                    <Input
-                      id="salaryMax"
-                      type="number"
-                      placeholder="es. 45000"
-                      value={salaryMax}
-                      onChange={(e) => setSalaryMax(e.target.value)}
-                      className="bg-background"
-                    />
-                  </div>
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label htmlFor="contactEmail">Email Contatto *</Label>
+                <Input
+                  id="contactEmail"
+                  type="email"
+                  placeholder="email@azienda.com"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  required
+                />
+              </div>
 
-              {isPiva === "true" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="dailyRateMin" className="text-card-foreground">Rate Giornaliera Min (EUR)</Label>
-                    <Input
-                      id="dailyRateMin"
-                      type="number"
-                      placeholder="es. 300"
-                      value={dailyRateMin}
-                      onChange={(e) => setDailyRateMin(e.target.value)}
-                      className="bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="dailyRateMax" className="text-card-foreground">Rate Giornaliera Max (EUR)</Label>
-                    <Input
-                      id="dailyRateMax"
-                      type="number"
-                      placeholder="es. 450"
-                      value={dailyRateMax}
-                      onChange={(e) => setDailyRateMax(e.target.value)}
-                      className="bg-background"
-                    />
-                  </div>
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label>Fonte dell'Opportunità *</Label>
+                <Select value={source} onValueChange={setSource} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleziona..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SOURCES.map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-              {!isPiva && (
-                <p className="text-muted-foreground text-sm">Seleziona il tipo di contratto per visualizzare i campi relativi al compenso.</p>
-              )}
+              <div className="space-y-2">
+                <Label htmlFor="notes">Note Aggiuntive</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Altre informazioni utili (benefits, orari speciali, etc.)..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                />
+              </div>
             </CardContent>
           </Card>
 
-          {/* Notes */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-card-foreground">Note Aggiuntive</CardTitle>
-              <CardDescription>Altre informazioni utili</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                placeholder="Aggiungi qualsiasi altra informazione rilevante..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                className="bg-background"
-              />
-            </CardContent>
-          </Card>
-
-          <div className="flex gap-4">
-            <Button type="submit" size="lg" disabled={loading}>
+          {/* Submit */}
+          <div className="flex gap-4 justify-center">
+            <Button type="submit" size="lg" disabled={loading} className="bg-emerald-600 hover:bg-emerald-700">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Pubblicazione...
+                  Pubblicazione in corso...
                 </>
               ) : (
                 "Pubblica Annuncio"
