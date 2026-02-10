@@ -1,11 +1,10 @@
 import React from "react"
 import type { Metadata } from 'next'
-import { Inter, DM_Sans } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const _inter = Inter({ subsets: ["latin"] });
-const _dmSans = DM_Sans({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'Lavori Halal - Opportunità di Lavoro Etiche',
@@ -36,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="it">
-      <body className={`${_inter.className} ${_dmSans.className} font-sans antialiased`}>
+    <html lang="it" className="scroll-smooth">
+      <body className={`${inter.className} antialiased`}>
         {children}
         <Analytics />
       </body>
