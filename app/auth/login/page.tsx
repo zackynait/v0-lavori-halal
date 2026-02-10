@@ -45,26 +45,33 @@ export default function LoginPage() {
 
   if (loggedIn) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center">
-        <Card className="max-w-md w-full mx-4">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="w-8 h-8 text-emerald-600" />
-            </div>
-            <CardTitle className="text-2xl text-gray-900">Accesso Riuscito!</CardTitle>
-            <CardDescription>
-              Bentornato nella piattaforma Lavori Halal
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-gray-600 mb-4">
-              Stai per essere reindirizzato alla pagina degli annunci...
-            </p>
-            <div className="animate-pulse">
-              <div className="h-2 bg-emerald-200 rounded-full w-full"></div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/10 via-teal-400/10 to-emerald-400/10 animate-pulse"></div>
+        <div className="relative z-10 max-w-md w-full mx-4">
+          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-lg">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <CheckCircle className="w-10 h-10 text-emerald-600" />
+              </div>
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Login Success!</CardTitle>
+              <CardDescription className="text-gray-600">
+                Bentornato su Lavori Halal
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="text-center space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full">
+                  <Building className="w-4 h-4 text-emerald-600" />
+                  <span className="text-sm font-medium text-emerald-800">Accesso verificato</span>
+                </div>
+                <p className="text-gray-600">Stai per essere reindirizzato...</p>
+                <div className="flex justify-center">
+                  <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
